@@ -8,16 +8,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.media.Image
+import android.media.MediaParser
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import android.util.Log.INFO
-import android.widget.ImageView
+import android.view.View
 import android.widget.RemoteViews
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.widget.ImageViewCompat
-import com.example.testwidget.databinding.NewAppWidgetBinding
 
 /**
  * Implementation of App Widget functionality.
@@ -26,6 +24,11 @@ class NewAppWidget : AppWidgetProvider() {
 
 
    var flag: Boolean = false
+
+    companion object{
+        lateinit var music: MediaPlayer
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onUpdate(
@@ -39,8 +42,11 @@ class NewAppWidget : AppWidgetProvider() {
         }
     }
 
+
+
     override fun onEnabled(context: Context) {
         // Enter relevant functionality for when the first widget is created
+        music = MediaPlayer.create(context, R.raw.mus)
     }
 
     override fun onDisabled(context: Context) {
@@ -49,10 +55,11 @@ class NewAppWidget : AppWidgetProvider() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onReceive(context: Context?, intent: Intent?) {
+
         super.onReceive(context, intent)
         val appWidgetManager = AppWidgetManager
             .getInstance(context)
-        if(intent?.action == "Action1"){
+        if(intent?.action == "nextImg"){
             Log.d("pacname", context?.packageName.toString())
 //            Toast.makeText(context, "Action1", Toast.LENGTH_SHORT).show()
             val views = RemoteViews(context?.packageName, R.layout.new_app_widget)
@@ -67,7 +74,7 @@ class NewAppWidget : AppWidgetProvider() {
             appWidgetManager.updateAppWidget(appWidgetIds[0], views)
         }
 
-        if(intent?.action == "Action2"){
+        if(intent?.action == "previousImg"){
             val views = RemoteViews(context?.packageName, R.layout.new_app_widget)
             views.setImageViewResource(R.id.imageView, R.drawable.example_appwidget_preview)
             val thisAppWidget = context?.let {
@@ -78,14 +85,27 @@ class NewAppWidget : AppWidgetProvider() {
             var appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget)
             appWidgetManager.updateAppWidget(appWidgetIds[0], views)
         }
+
+        if(intent?.action == "playMusic"){
+            Log.d("musik", "play")
+            music.start()
+        }
+
+        if(intent?.action == "pauseMusic"){
+            Log.d("musik", "pause")
+            music.pause()
+        }
     }
 }
+
+
 
 internal fun updateAppWidget(
     context: Context,
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
+
 
     val widgetText = context.getString(R.string.appwidget_text)
     // Construct the RemoteViews object
@@ -106,7 +126,7 @@ internal fun updateAppWidget(
 //    val toastIntent = Intent("com.example.testwidget.action1")
 //    toastIntent.component = ComponentName(context, NewAppWidget::class.java)
     val imageIntent = Intent(context, NewAppWidget::class.java)
-    imageIntent.setAction("Action1")
+    imageIntent.setAction("nextImg")
     val pendingtoastIntent = PendingIntent.getBroadcast(
         context,
         1,
@@ -117,7 +137,7 @@ internal fun updateAppWidget(
     views.setOnClickPendingIntent(R.id.btAction, pendingtoastIntent)
 
     val imageIntent2 = Intent(context, NewAppWidget::class.java)
-    imageIntent2.setAction("Action2")
+    imageIntent2.setAction("previousImg")
     val pendingtoastIntent2 = PendingIntent.getBroadcast(
         context,
         1,
@@ -125,6 +145,26 @@ internal fun updateAppWidget(
         PendingIntent.FLAG_UPDATE_CURRENT
     )
     views.setOnClickPendingIntent(R.id.previous, pendingtoastIntent2)
+
+    val musicIntent = Intent(context, NewAppWidget::class.java)
+    musicIntent.setAction("playMusic")
+    val musicPendingIntent = PendingIntent.getBroadcast(
+        context,
+        1,
+        musicIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT
+    )
+    views.setOnClickPendingIntent(R.id.playBtt, musicPendingIntent)
+
+    val musicPauseIntent = Intent(context, NewAppWidget::class.java)
+    musicPauseIntent.setAction("pauseMusic")
+    val musicPausePendingIntent = PendingIntent.getBroadcast(
+        context,
+        1,
+        musicPauseIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT
+    )
+    views.setOnClickPendingIntent(R.id.pauseBtt, musicPausePendingIntent)
 
 
 
