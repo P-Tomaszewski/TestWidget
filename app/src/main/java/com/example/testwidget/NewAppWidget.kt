@@ -27,6 +27,8 @@ class NewAppWidget : AppWidgetProvider() {
 
     companion object{
         lateinit var music: MediaPlayer
+        val playList = mutableListOf(R.raw.mus, R.raw.mus2)
+        var musicFlag: Boolean = false
     }
 
 
@@ -46,7 +48,8 @@ class NewAppWidget : AppWidgetProvider() {
 
     override fun onEnabled(context: Context) {
         // Enter relevant functionality for when the first widget is created
-        music = MediaPlayer.create(context, R.raw.mus)
+
+        music = MediaPlayer.create(context, playList[0])
     }
 
     override fun onDisabled(context: Context) {
@@ -94,6 +97,23 @@ class NewAppWidget : AppWidgetProvider() {
         if(intent?.action == "pauseMusic"){
             Log.d("musik", "pause")
             music.pause()
+        }
+
+        if(intent?.action == "closeMusic"){
+            Log.d("musik", "close")
+            music.stop()
+        }
+        if(intent?.action == "nextMusic"){
+            Log.d("musik", "next")
+            music.reset()
+            if(!musicFlag) {
+                music = MediaPlayer.create(context, playList[1])
+                musicFlag = true
+            } else {
+                music = MediaPlayer.create(context, playList[0])
+                musicFlag = false
+            }
+            music.start()
         }
     }
 }
@@ -165,6 +185,26 @@ internal fun updateAppWidget(
         PendingIntent.FLAG_UPDATE_CURRENT
     )
     views.setOnClickPendingIntent(R.id.pauseBtt, musicPausePendingIntent)
+
+    val musicCloseIntent = Intent(context, NewAppWidget::class.java)
+    musicCloseIntent.setAction("closeMusic")
+    val musicClosePendingIntent = PendingIntent.getBroadcast(
+        context,
+        1,
+        musicPauseIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT
+    )
+    views.setOnClickPendingIntent(R.id.stopBtt, musicClosePendingIntent)
+
+    val musicNextIntent = Intent(context, NewAppWidget::class.java)
+    musicNextIntent.setAction("nextMusic")
+    val musicNextPendingIntent = PendingIntent.getBroadcast(
+        context,
+        1,
+        musicNextIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT
+    )
+    views.setOnClickPendingIntent(R.id.nextBtt, musicNextPendingIntent)
 
 
 

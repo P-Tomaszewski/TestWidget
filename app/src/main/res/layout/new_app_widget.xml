@@ -40,9 +40,9 @@
         android:layout_below="@+id/previous"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="80dp"
-        android:layout_marginEnd="66dp"
-        android:layout_marginRight="66dp"
+        android:layout_marginTop="126dp"
+        android:layout_marginEnd="70dp"
+        android:layout_marginRight="70dp"
         android:contentDescription="zdj"
         app:srcCompat="@drawable/example_appwidget_preview"
         tools:ignore="ImageContrastCheck" />
@@ -84,5 +84,29 @@
         android:layout_toLeftOf="@+id/btAction"
         android:text="Pause"
         app:icon="@android:drawable/ic_media_pause" />
+
+    <Button
+        android:id="@+id/stopBtt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pauseBtt"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="23dp"
+        android:layout_marginRight="23dp"
+        android:layout_toStartOf="@+id/previous"
+        android:layout_toLeftOf="@+id/previous"
+        android:text="Stop" />
+
+    <Button
+        android:id="@+id/nextBtt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/stopBtt"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="174dp"
+        android:layout_marginRight="174dp"
+        android:text="Next" />
 
 </RelativeLayout>
